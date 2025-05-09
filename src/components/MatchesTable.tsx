@@ -10,7 +10,7 @@ import { RoundsView } from "./matches/RoundsView"
 import { TableView } from "./matches/TableView"
 import { CardsView } from "./matches/CardsView"
 import { NoMatchesFound } from "./matches/NoMatchesFound"
-import { useMatchSorting } from "@/hooks/useMatchSorting"
+import { useMatchSorting, SortField } from "@/hooks/useMatchSorting"
 import { logger } from "@/utils/logger"
 
 interface MatchesTableProps {
@@ -20,7 +20,7 @@ interface MatchesTableProps {
 export const MatchesTable = memo(({ matches = [] }: MatchesTableProps) => {
   const [viewType, setViewType] = useState<"rounds" | "all" | "cards">("rounds")
   const [filters, setFilters] = useState({ team: "", round: "", result: "" })
-  const { sortConfig, requestSort, getSortIcon } = useMatchSorting()
+  const { sortConfig, requestSort, sortMatches, getSortIcon } = useMatchSorting()
 
   const filteredMatches = useMemo(() => {
     logger.log("Filtering matches with:", filters)
@@ -49,9 +49,8 @@ export const MatchesTable = memo(({ matches = [] }: MatchesTableProps) => {
   }, [matches, filters])
 
   const sortedMatches = useMemo(() => {
-    if (!sortConfig) return filteredMatches
-    return useMatchSorting().sortMatches(filteredMatches)
-  }, [filteredMatches, sortConfig])
+    return sortMatches(filteredMatches)
+  }, [filteredMatches, sortMatches])
 
   const matchesByRound = useMemo(() => {
     return sortedMatches.reduce(
@@ -77,7 +76,7 @@ export const MatchesTable = memo(({ matches = [] }: MatchesTableProps) => {
         <MatchesHeader
           viewType={viewType}
           setViewType={setViewType}
-          requestSort={requestSort}
+          requestSort={(key: SortField) => requestSort(key)}
           getSortIcon={getSortIcon}
         />
       </CardHeader>

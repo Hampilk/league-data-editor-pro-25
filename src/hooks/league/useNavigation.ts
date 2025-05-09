@@ -1,6 +1,13 @@
 
 import { useState, useCallback } from "react"
-import { RouteType, RouteHistoryItem } from "@/types"
+import { RouteType } from "@/types"
+
+interface RouteHistoryItem {
+  route: RouteType
+  leagueId?: string
+  matchId?: string
+  tab?: string
+}
 
 interface NavigateParams {
   leagueId?: string

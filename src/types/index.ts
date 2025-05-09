@@ -86,3 +86,25 @@ export interface MatchPrediction {
   htftAnalysis: HalfTimeFullTime[]
   headToHead?: HeadToHeadStat
 }
+
+export interface PredictionHistory {
+  id: string
+  date: string
+  prediction: MatchPrediction
+  actualResult?: {
+    homeScore: number
+    awayScore: number
+    result: 'home_win' | 'draw' | 'away_win'
+  }
+  isCorrect?: boolean
+}
+
+// Value bet tracking
+export interface ValueBet {
+  matchId: string
+  pattern: PredictionPattern
+  stake: number
+  potentialReturn: number
+  isWon?: boolean
+  actualReturn?: number
+}

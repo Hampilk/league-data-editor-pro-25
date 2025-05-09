@@ -1,3 +1,4 @@
+
 type TranslationKey = string;
 
 type TranslationMap = {
@@ -44,6 +45,7 @@ const hu: TranslationMap = {
   "predictions.results.totalGoals": "Összes gól",
   "predictions.results.over": "Több mint",
   "predictions.results.under": "Kevesebb mint",
+  "predictions.results.successRate": "Sikerességi arány",
   
   // HTFT options
   "htft.home_home": "Hazai - Hazai",
@@ -55,6 +57,26 @@ const hu: TranslationMap = {
   "htft.away_home": "Vendég - Hazai",
   "htft.away_draw": "Vendég - Döntetlen",
   "htft.away_away": "Vendég - Vendég",
+  
+  // Prediction history
+  "predictions.noHistoryYet": "Még nincs előrejelzés történet",
+  "predictions.makeFirstPrediction": "Készítsd el az első előrejelzésed a bal oldali eszközzel",
+  "predictions.totalPredictions": "Összes előrejelzés",
+  "predictions.successfulPredictions": "Sikeres előrejelzések",
+  "predictions.highConfidence": "Magas megbízhatóság",
+  "predictions.patternPerformance": "Minta teljesítmény",
+  "predictions.usedTimes": "Használat",
+  "predictions.avgConfidence": "Átlagos megbízhatóság",
+  "predictions.recentPredictions": "Legutóbbi előrejelzések",
+  "predictions.hit": "Talált",
+  "predictions.miss": "Téves",
+  "predictions.successful": "sikeres",
+  
+  // Pattern types
+  "predictions.patternTypes.both_teams_score": "Mindkét csapat szerez gólt",
+  "predictions.patternTypes.draw": "Döntetlen",
+  "predictions.patternTypes.ht_ft_reversal": "Félidő/végeredmény fordulás",
+  "predictions.patternTypes.specific_score": "Pontos eredmény",
   
   // UI components
   "ui.loading": "Betöltés...",
@@ -74,6 +96,79 @@ const hu: TranslationMap = {
 };
 
 const en: TranslationMap = {
+  // Prediction Components
+  "predictions.title": "Match Predictions",
+  "predictions.subtitle": "Statistics-based predictions for matches",
+  "predictions.goalScoringTitle": "Goal Scoring Prediction",
+  "predictions.bothTeamsScore": "Both teams score",
+  "predictions.drawLikelihood": "Draw likelihood",
+  "predictions.homeWin": "Home win",
+  "predictions.awayWin": "Away win",
+  "predictions.reversal": "Reversal",
+  "predictions.highValue": "High value bet",
+  "predictions.confidence": "Confidence",
+  "predictions.odds": "Odds",
+  "predictions.htft": "Half-time/Full-time",
+  "predictions.previousMatches": "Previous matches",
+  "predictions.buttonLabel": "Generate Prediction",
+  "predictions.loading": "Loading prediction...",
+  "predictions.homeTeam": "Home team",
+  "predictions.awayTeam": "Away team",
+  "predictions.selectTeam": "Select team",
+  "predictions.noDataAvailable": "No data available",
+  "predictions.predictionModelInfo": "Prediction model information",
+  "predictions.howItWorks": "How the prediction system works",
+  "predictions.predictionDescription": "The prediction model takes several factors into account:",
+  
+  // Model description
+  "predictions.model.historical": "Previous results between the two teams",
+  "predictions.model.recentForm": "Recent form (last 5 matches)",
+  "predictions.model.homeAdvantage": "Home advantage (1.2x multiplier for home team)",
+  "predictions.model.averageGoals": "Average goals scored and conceded by each team",
+  "predictions.model.leaguePosition": "League table position and relative strength",
+  
+  // Results
+  "predictions.results.title": "Prediction Results",
+  "predictions.results.predictedResult": "Predicted result",
+  "predictions.results.confidence": "Confidence",
+  "predictions.results.bothTeamsToScore": "Both teams to score",
+  "predictions.results.totalGoals": "Total goals",
+  "predictions.results.over": "Over",
+  "predictions.results.under": "Under",
+  "predictions.results.successRate": "Success rate",
+  
+  // HTFT options
+  "htft.home_home": "Home - Home",
+  "htft.home_draw": "Home - Draw",
+  "htft.home_away": "Home - Away",
+  "htft.draw_home": "Draw - Home",
+  "htft.draw_draw": "Draw - Draw",
+  "htft.draw_away": "Draw - Away",
+  "htft.away_home": "Away - Home",
+  "htft.away_draw": "Away - Draw",
+  "htft.away_away": "Away - Away",
+  
+  // Prediction history
+  "predictions.noHistoryYet": "No prediction history yet",
+  "predictions.makeFirstPrediction": "Make your first prediction using the tool on the left",
+  "predictions.totalPredictions": "Total predictions",
+  "predictions.successfulPredictions": "Successful predictions",
+  "predictions.highConfidence": "High confidence",
+  "predictions.patternPerformance": "Pattern performance",
+  "predictions.usedTimes": "Used times",
+  "predictions.avgConfidence": "Average confidence",
+  "predictions.recentPredictions": "Recent predictions",
+  "predictions.hit": "Hit",
+  "predictions.miss": "Miss",
+  "predictions.successful": "successful",
+  
+  // Pattern types
+  "predictions.patternTypes.both_teams_score": "Both teams score",
+  "predictions.patternTypes.draw": "Draw",
+  "predictions.patternTypes.ht_ft_reversal": "HT/FT reversal",
+  "predictions.patternTypes.specific_score": "Specific score",
+  
+  // UI components
   "ui.loading": "Loading...",
   "ui.error": "An error occurred",
   "ui.retry": "Retry",

@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Loader2, TrendingUp, Info, BarChart3 } from "lucide-react";
+import { Loader2, TrendingUp, Info, BarChart3, Save } from "lucide-react";
 import { PredictionPatterns } from "./PredictionPatterns";
 import { HalfTimeFullTimeAnalysis } from "./HalfTimeFullTimeAnalysis";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PredictionPattern, HalfTimeFullTime, HeadToHeadStat } from "@/types";
+import { PredictionPattern, HalfTimeFullTime, HeadToHeadStat, MatchPrediction, Match } from "@/types";
 import useTranslation from "@/utils/i18n";
+import { toast } from "sonner";
 
 // Mock data for demonstration until API is connected
 const mockTeams = [
@@ -156,7 +157,7 @@ const mockHeadToHead: Record<string, HeadToHeadStat> = {
 };
 
 interface MatchPredictionSystemProps {
-  onSavePrediction?: (prediction: any) => void;
+  onSavePrediction?: (prediction: MatchPrediction) => void;
 }
 
 export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({ 
@@ -170,12 +171,14 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
   const [patterns, setPatterns] = useState<PredictionPattern[]>([]);
   const [htftData, setHtftData] = useState<HalfTimeFullTime[]>([]);
   const [headToHead, setHeadToHead] = useState<HeadToHeadStat | null>(null);
+  const [currentPrediction, setCurrentPrediction] = useState<MatchPrediction | null>(null);
   
   // Reset predictions when teams change
   useEffect(() => {
     setPatterns([]);
     setHtftData([]);
     setHeadToHead(null);
+    setCurrentPrediction(null);
   }, [homeTeam, awayTeam]);
   
   const handleGeneratePrediction = () => {
@@ -186,11 +189,71 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
     // Simulate API call
     setTimeout(() => {
       const matchKey = `${homeTeam}-${awayTeam}`;
-      setPatterns(mockPatterns[matchKey] || []);
-      setHtftData(mockHtft[matchKey] || []);
-      setHeadToHead(mockHeadToHead[matchKey] || null);
+      const matchPatterns = mockPatterns[matchKey] || [];
+      const matchHtft = mockHtft[matchKey] || [];
+      const matchHeadToHead = mockHeadToHead[matchKey] || null;
+      
+      setPatterns(matchPatterns);
+      setHtftData(matchHtft);
+      setHeadToHead(matchHeadToHead);
+      
+      // Create a match prediction object
+      const mockMatch: Match = {
+        date: new Date().toISOString(),
+        home_team: homeTeam,
+        away_team: awayTeam,
+        home_score: 0,
+        away_score: 0,
+        ht_home_score: 0,
+        ht_away_score: 0
+      };
+      
+      // Determine predicted result based on patterns and head-to-head
+      let predictedResult: 'home_win' | 'draw' | 'away_win' = 'draw';
+      let confidenceLevel = 0.5;
+      let predictedScore = { home: 1, away: 1 };
+      
+      if (matchHeadToHead) {
+        // Use head-to-head data to determine prediction
+        const { homeWins, awayWins, draws } = matchHeadToHead;
+        const totalMatches = homeWins + awayWins + draws;
+        
+        if (homeWins > awayWins && homeWins > draws) {
+          predictedResult = 'home_win';
+          confidenceLevel = homeWins / totalMatches + 0.1; // +0.1 for home advantage
+          predictedScore = { home: 2, away: 1 };
+        } else if (awayWins > homeWins && awayWins > draws) {
+          predictedResult = 'away_win';
+          confidenceLevel = awayWins / totalMatches;
+          predictedScore = { home: 0, away: 1 };
+        } else {
+          predictedResult = 'draw';
+          confidenceLevel = draws / totalMatches;
+          predictedScore = { home: 1, away: 1 };
+        }
+      }
+      
+      // Create the prediction object
+      const prediction: MatchPrediction = {
+        match: mockMatch,
+        predictedResult,
+        confidenceLevel,
+        predictedScore,
+        patterns: matchPatterns,
+        htftAnalysis: matchHtft,
+        headToHead: matchHeadToHead
+      };
+      
+      setCurrentPrediction(prediction);
       setIsLoading(false);
     }, 1500);
+  };
+  
+  const handleSaveCurrentPrediction = () => {
+    if (currentPrediction && onSavePrediction) {
+      onSavePrediction(currentPrediction);
+      toast.success(t("predictions.predictionSaved"));
+    }
   };
 
   return (
@@ -254,6 +317,18 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
       
       {(patterns.length > 0 || htftData.length > 0) && (
         <div className="animate-fadeIn">
+          <div className="flex justify-end mb-4">
+            <Button
+              variant="outline"
+              className="bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500/20 gap-2"
+              onClick={handleSaveCurrentPrediction}
+              disabled={!currentPrediction}
+            >
+              <Save className="h-4 w-4" />
+              {t("ui.save")}
+            </Button>
+          </div>
+          
           <Tabs defaultValue="patterns">
             <TabsList className="grid w-full grid-cols-3 bg-black/20">
               <TabsTrigger value="patterns">{t("ui.tab.overview")}</TabsTrigger>
@@ -325,6 +400,48 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
                           </div>
                         </div>
                       </div>
+                      
+                      {currentPrediction && (
+                        <div className="mt-6 bg-black/30 rounded-lg p-4 border border-white/5">
+                          <h3 className="text-sm text-gray-400 mb-3">
+                            {t("predictions.results.predictedResult")}
+                          </h3>
+                          <div className="flex justify-center items-center">
+                            <div className="text-center mx-4">
+                              <div className="text-gray-300">{currentPrediction.match.home_team}</div>
+                              <div className="text-3xl font-bold text-white mt-1">{currentPrediction.predictedScore?.home}</div>
+                            </div>
+                            <div className="text-gray-500 mx-2">vs</div>
+                            <div className="text-center mx-4">
+                              <div className="text-gray-300">{currentPrediction.match.away_team}</div>
+                              <div className="text-3xl font-bold text-white mt-1">{currentPrediction.predictedScore?.away}</div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-center mt-4">
+                            <Badge 
+                              variant="outline" 
+                              className={`
+                                ${currentPrediction.predictedResult === 'home_win' ? 'bg-green-500/20 text-green-400 border-green-500/20' : ''}
+                                ${currentPrediction.predictedResult === 'draw' ? 'bg-blue-500/20 text-blue-400 border-blue-500/20' : ''}
+                                ${currentPrediction.predictedResult === 'away_win' ? 'bg-amber-500/20 text-amber-400 border-amber-500/20' : ''}
+                                px-3 py-1
+                              `}
+                            >
+                              {currentPrediction.predictedResult === 'home_win' && t("predictions.homeWin")}
+                              {currentPrediction.predictedResult === 'draw' && t("predictions.drawLikelihood")}
+                              {currentPrediction.predictedResult === 'away_win' && t("predictions.awayWin")}
+                            </Badge>
+                          </div>
+                          
+                          <div className="mt-4 text-center">
+                            <div className="text-sm text-gray-400">{t("predictions.confidence")}</div>
+                            <div className="text-lg font-medium text-white">
+                              {Math.round(currentPrediction.confidenceLevel * 100)}%
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ) : (

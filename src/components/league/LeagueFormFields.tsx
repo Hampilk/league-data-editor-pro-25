@@ -1,6 +1,6 @@
 
 import { useCallback } from "react"
-import type { LeagueData } from "../../types"
+import type { LeagueData } from "@/types"
 
 interface FormErrors {
   name?: string
@@ -87,7 +87,7 @@ export const LeagueFormFields = ({ league, onChange, errors = {} }: LeagueFormFi
         <select
           id="league-status"
           value={league.status}
-          onChange={(e) => handleChange("status", e.target.value)}
+          onChange={(e) => handleChange("status", e.target.value as "In Progress" | "Completed")}
           className={`w-full bg-black/30 text-white border ${
             errors.status ? "border-red-500" : "border-white/10"
           } rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent`}
