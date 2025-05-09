@@ -1,4 +1,3 @@
-
 export interface LeagueData {
   id: string
   name: string
@@ -20,6 +19,17 @@ export interface Match {
   ht_away_score: number
   round?: number | string
   venue?: string
+}
+
+export interface TeamForm {
+  position: number
+  team: string
+  played: number
+  goalsFor: number
+  goalsAgainst: number
+  goalDifference: number
+  points: number
+  form: Array<"W" | "D" | "L">
 }
 
 export type RouteType = 

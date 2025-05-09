@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
@@ -21,7 +20,8 @@ const LeagueStatsDashboard: React.FC<LeagueStatsDashboardProps> = ({ league, mat
     const roundsMap: Record<string, { round: string; totalGoals: number; matches: number }> = {};
     
     matches.forEach(match => {
-      const round = match.round || "Unknown";
+      // Convert the round to string to ensure it's always a string
+      const round = match.round ? String(match.round) : "Unknown";
       const goals = match.home_score + match.away_score;
       
       if (!roundsMap[round]) {

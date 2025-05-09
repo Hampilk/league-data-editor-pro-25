@@ -1,6 +1,6 @@
-
-import { Match, StandingsEntry } from "@/types"
+import { Match } from "@/types"
 import { calculateStandings } from "./calculations"
+import type { StandingsEntry } from "./calculations"
 
 export interface LeagueStatistics {
   totalMatches: number
