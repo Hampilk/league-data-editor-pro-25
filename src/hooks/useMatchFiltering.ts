@@ -1,7 +1,7 @@
 
 import { useState, useCallback, useMemo } from "react"
 import type { Match } from "@/types"
-import { useMatchSorting, SortConfig } from "@/components/matches/useMatchSorting"
+import { useMatchSorting, SortConfig, SortField } from "@/components/matches/useMatchSorting"
 
 interface MatchFilters {
   team?: string

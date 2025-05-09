@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button"
 import { CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { SortField } from "../matches/useMatchSorting"
 
 interface MatchesHeaderProps {
   viewType: "rounds" | "all" | "cards"
   setViewType: (value: "rounds" | "all" | "cards") => void
-  requestSort: (key: string) => void
-  getSortIcon: (key: string) => JSX.Element
+  requestSort: (key: SortField) => void
+  getSortIcon: (key: SortField) => JSX.Element
 }
 
 export const MatchesHeader = memo(({ viewType, setViewType, requestSort, getSortIcon }: MatchesHeaderProps) => {

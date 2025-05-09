@@ -4,11 +4,12 @@ import { Match } from "@/types"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { MatchScore } from "./MatchScore"
+import { SortField } from "./useMatchSorting"
 
 interface TableViewProps {
   matches: Match[]
-  requestSort: (key: string) => void
-  getSortIcon: (key: string) => JSX.Element
+  requestSort: (key: SortField) => void
+  getSortIcon: (key: SortField) => JSX.Element
 }
 
 export const TableView = memo(({ matches, requestSort, getSortIcon }: TableViewProps) => {
