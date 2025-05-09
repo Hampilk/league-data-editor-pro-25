@@ -1,3 +1,4 @@
+
 import { Match } from "@/types"
 import { calculateStandings } from "./calculations"
 import type { StandingsEntry } from "./calculations"
@@ -169,4 +170,92 @@ export function predictMatchOutcome(homeTeam: string, awayTeam: string, matches:
     awayScore: predictedAwayScore || 0,
     confidence: confidence || 30
   }
+}
+
+// New function to calculate value betting opportunities
+export function calculateValueBets(homeTeam: string, awayTeam: string, matches: Match[]) {
+  const headToHeadMatches = matches.filter(
+    m => (m.home_team === homeTeam && m.away_team === awayTeam) || 
+         (m.home_team === awayTeam && m.away_team === homeTeam)
+  )
+  
+  // Calculate pattern frequencies based on historical data
+  const totalMatches = matches.length
+  const bothTeamsScored = matches.filter(
+    m => m.home_score > 0 && m.away_score > 0
+  ).length
+  
+  const draws = matches.filter(
+    m => m.home_score === m.away_score
+  ).length
+  
+  const htftReversals = matches.filter(
+    m => {
+      const htHomeWin = m.ht_home_score > m.ht_away_score
+      const htAwayWin = m.ht_home_score < m.ht_away_score
+      const ftHomeWin = m.home_score > m.away_score
+      const ftAwayWin = m.home_score < m.away_score
+      
+      return (htHomeWin && ftAwayWin) || (htAwayWin && ftHomeWin)
+    }
+  ).length
+  
+  // Calculate the number of matches with specific score lines
+  const oneNilHomeWins = matches.filter(
+    m => m.home_score === 1 && m.away_score === 0
+  ).length
+  
+  const twoOneHomeWins = matches.filter(
+    m => m.home_score === 2 && m.away_score === 1
+  ).length
+  
+  const oneAllDraws = matches.filter(
+    m => m.home_score === 1 && m.away_score === 1
+  ).length
+  
+  const scorelessDraws = matches.filter(
+    m => m.home_score === 0 && m.away_score === 0
+  ).length
+  
+  // Calculate historical success rates for different patterns
+  const bothTeamsScoredRate = (bothTeamsScored / totalMatches) * 100
+  const drawRate = (draws / totalMatches) * 100
+  const htftReversalRate = (htftReversals / totalMatches) * 100
+  const oneNilHomeWinRate = (oneNilHomeWins / totalMatches) * 100
+  const twoOneHomeWinRate = (twoOneHomeWins / totalMatches) * 100
+  const oneAllDrawRate = (oneAllDraws / totalMatches) * 100
+  const scorelessDrawRate = (scorelessDraws / totalMatches) * 100
+  
+  // Based on these rates, create value betting opportunities
+  // Higher odds value = higher potential return but lower probability
+  return [
+    {
+      type: 'both_teams_score' as const,
+      confidence: bothTeamsScoredRate > 60 ? 0.7 : 0.5,
+      description: 'Both teams to score',
+      historicalSuccess: Math.round(bothTeamsScoredRate),
+      oddsValue: 1.8
+    },
+    {
+      type: 'draw' as const,
+      confidence: drawRate > 30 ? 0.6 : 0.4,
+      description: 'Match to end in a draw',
+      historicalSuccess: Math.round(drawRate),
+      oddsValue: 3.4
+    },
+    {
+      type: 'ht_ft_reversal' as const,
+      confidence: htftReversalRate > 20 ? 0.5 : 0.3,
+      description: 'Result at HT different from FT',
+      historicalSuccess: Math.round(htftReversalRate),
+      oddsValue: 4.5
+    },
+    {
+      type: 'specific_score' as const,
+      confidence: oneAllDrawRate > 15 ? 0.4 : 0.2,
+      description: 'Final score to be 1-1',
+      historicalSuccess: Math.round(oneAllDrawRate),
+      oddsValue: 6.5
+    }
+  ]
 }

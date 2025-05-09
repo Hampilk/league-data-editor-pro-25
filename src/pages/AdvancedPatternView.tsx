@@ -1,13 +1,25 @@
 
-import { memo } from "react"
-import { ArrowLeft, BarChart3, Network, Target, Wand2 } from "lucide-react"
+import { memo, useState } from "react"
+import { ArrowLeft, BarChart3, Network, Target, Wand2, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLeagueState } from "@/hooks/league"
+import { ValueBetTracker } from "@/components/predictions/ValueBetTracker"
+import { calculateValueBets } from "@/utils/leagueStatistics"
 
 export const AdvancedPatternView = memo(() => {
-  const { goBack } = useLeagueState()
+  const { goBack, currentMatches } = useLeagueState()
+  const [selectedTab, setSelectedTab] = useState("visualization")
+  
+  // Generate some sample patterns for the value betting tab
+  const samplePatterns = currentMatches && currentMatches.length > 0 
+    ? calculateValueBets(
+        currentMatches[0]?.home_team || "Team A", 
+        currentMatches[0]?.away_team || "Team B", 
+        currentMatches
+      )
+    : []
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -32,8 +44,8 @@ export const AdvancedPatternView = memo(() => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="visualization" className="w-full">
-            <TabsList className="grid grid-cols-3 bg-black/20 w-full rounded-xl mb-6">
+          <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+            <TabsList className="grid grid-cols-4 bg-black/20 w-full rounded-xl mb-6">
               <TabsTrigger
                 value="visualization"
                 className="py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-black/20"
@@ -59,6 +71,15 @@ export const AdvancedPatternView = memo(() => {
                 <div className="flex items-center gap-2">
                   <Target className="h-4 w-4" />
                   <span>Predictions</span>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="value-bets"
+                className="py-3 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-black/20"
+              >
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  <span>Value Bets</span>
                 </div>
               </TabsTrigger>
             </TabsList>
@@ -104,6 +125,22 @@ export const AdvancedPatternView = memo(() => {
                   <div className="text-center p-8 text-gray-500">
                     Pattern-based prediction tools will be implemented here
                   </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="value-bets">
+              <div className="p-6 bg-black/20 rounded-xl border border-white/10">
+                <h3 className="text-lg font-medium mb-4">Value Betting Analysis</h3>
+                <p className="text-gray-400">
+                  Identify value betting opportunities where statistical probability exceeds the
+                  implied probability of bookmaker odds, creating positive expected value bets.
+                </p>
+                <div className="mt-8">
+                  <ValueBetTracker 
+                    patterns={samplePatterns}
+                    match={currentMatches && currentMatches.length > 0 ? currentMatches[0] : undefined}
+                  />
                 </div>
               </div>
             </TabsContent>

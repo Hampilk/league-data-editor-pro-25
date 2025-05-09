@@ -1,3 +1,4 @@
+
 export interface LeagueData {
   id: string
   name: string
@@ -95,6 +96,7 @@ export interface MatchPrediction {
   patterns: PredictionPattern[]
   htftAnalysis: HalfTimeFullTime[]
   headToHead?: HeadToHeadStat
+  valueBets?: ValueBet[] // Added this field to link value bets to the prediction
 }
 
 export interface PredictionHistory {
@@ -117,4 +119,8 @@ export interface ValueBet {
   potentialReturn: number
   isWon?: boolean
   actualReturn?: number
+  recommendedStake?: number // Added for staking recommendation
+  valueRating?: number // Added to rate the value (1-5)
+  bookmakerOdds?: number // Added to track the offered odds
+  expectedValue?: number // Added for expected value calculation
 }

@@ -2,14 +2,15 @@
 import { memo, useState } from "react"
 import { useLeagueState } from "@/hooks/league"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, ArrowLeft, PieChart } from "lucide-react"
+import { RefreshCw, ArrowLeft, PieChart, TrendingUp } from "lucide-react"
 import { LeagueStats } from "@/components/stats/LeagueStats"
 import { calculateLeagueStatistics, predictMatchOutcome } from "@/utils/leagueStatistics"
 import { MatchPredictionSystem } from "@/components/predictions/MatchPredictionSystem"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { MatchPrediction } from "@/types"
+import { MatchPrediction, ValueBet } from "@/types"
 import { PredictionHistory } from "@/components/predictions/PredictionHistory"
+import { ValueBetTracker } from "@/components/predictions/ValueBetTracker"
 
 export const PredictionsView = memo(() => {
   const { 
@@ -22,6 +23,7 @@ export const PredictionsView = memo(() => {
   } = useLeagueState()
   
   const [savedPredictions, setSavedPredictions] = useState<MatchPrediction[]>([])
+  const [valueBets, setValueBets] = useState<ValueBet[]>([])
   const [activeTab, setActiveTab] = useState("predictions")
   
   // Get the currently selected league
@@ -51,6 +53,69 @@ export const PredictionsView = memo(() => {
     })
   }
   
+  // Handler for saving value bets
+  const handleSaveValueBet = (bet: ValueBet) => {
+    setValueBets(prev => [...prev, bet])
+    
+    // Also update the prediction if it exists
+    if (savedPredictions.length > 0) {
+      setSavedPredictions(prev => 
+        prev.map(prediction => {
+          // Find the prediction that matches this bet's match
+          if (prediction.match.id === bet.matchId || 
+              `${prediction.match.home_team}-${prediction.match.away_team}-${prediction.match.date}` === bet.matchId) {
+            return {
+              ...prediction,
+              valueBets: [...(prediction.valueBets || []), bet]
+            }
+          }
+          return prediction
+        })
+      )
+    }
+  }
+  
+  // Handler for updating value bets
+  const handleUpdateValueBet = (updatedBet: ValueBet) => {
+    // Update in the main valueBets state
+    setValueBets(prev => 
+      prev.map(bet => bet.matchId === updatedBet.matchId && 
+                       bet.pattern.type === updatedBet.pattern.type ? updatedBet : bet)
+    )
+    
+    // Also update in the related prediction if it exists
+    setSavedPredictions(prev => 
+      prev.map(prediction => {
+        if (!prediction.valueBets) return prediction
+        
+        // Check if this prediction contains the bet being updated
+        const hasBet = prediction.valueBets.some(
+          bet => bet.matchId === updatedBet.matchId && bet.pattern.type === updatedBet.pattern.type
+        )
+        
+        if (hasBet) {
+          return {
+            ...prediction,
+            valueBets: prediction.valueBets.map(
+              bet => bet.matchId === updatedBet.matchId && 
+                     bet.pattern.type === updatedBet.pattern.type ? updatedBet : bet
+            )
+          }
+        }
+        return prediction
+      })
+    )
+  }
+  
+  // Filter value bets by active prediction (if any)
+  const getActivePrediction = () => {
+    if (savedPredictions.length === 0) return null
+    return savedPredictions[savedPredictions.length - 1] // Get the most recent
+  }
+  
+  const activePrediction = getActivePrediction()
+  const activePredictionBets = activePrediction?.valueBets || []
+  
   return (
     <div className="space-y-6 animate-fadeIn">
       <div className="flex justify-between items-center">
@@ -76,8 +141,14 @@ export const PredictionsView = memo(() => {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 bg-black/20">
+        <TabsList className="grid w-full grid-cols-3 bg-black/20">
           <TabsTrigger value="predictions">Prediction System</TabsTrigger>
+          <TabsTrigger value="value-bets">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              Value Bets
+            </div>
+          </TabsTrigger>
           <TabsTrigger value="history">
             <div className="flex items-center gap-2">
               <PieChart className="w-4 h-4" />
@@ -97,6 +168,16 @@ export const PredictionsView = memo(() => {
                 <LeagueStats statistics={leagueStatistics} league={selectedLeague} />
               </div>
             </div>
+          </TabsContent>
+          
+          <TabsContent value="value-bets">
+            <ValueBetTracker 
+              match={activePrediction?.match}
+              patterns={activePrediction?.patterns || []}
+              existingBets={valueBets}
+              onSaveBet={handleSaveValueBet}
+              onUpdateBet={handleUpdateValueBet}
+            />
           </TabsContent>
           
           <TabsContent value="history">
