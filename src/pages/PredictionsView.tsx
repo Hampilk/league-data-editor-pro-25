@@ -2,15 +2,17 @@
 import { memo, useState } from "react"
 import { useLeagueState } from "@/hooks/league"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, ArrowLeft, PieChart, TrendingUp } from "lucide-react"
+import { RefreshCw, ArrowLeft, PieChart, TrendingUp, BarChart4 } from "lucide-react"
 import { LeagueStats } from "@/components/stats/LeagueStats"
-import { calculateLeagueStatistics, predictMatchOutcome } from "@/utils/leagueStatistics"
+import { calculateLeagueStatistics } from "@/utils/leagueStatistics"
+import { runPrediction } from "@/utils/predictionEngine"
 import { MatchPredictionSystem } from "@/components/predictions/MatchPredictionSystem"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MatchPrediction, ValueBet } from "@/types"
 import { PredictionHistory } from "@/components/predictions/PredictionHistory"
 import { ValueBetTracker } from "@/components/predictions/ValueBetTracker"
+import { toast } from "sonner"
 
 export const PredictionsView = memo(() => {
   const { 
@@ -25,6 +27,7 @@ export const PredictionsView = memo(() => {
   const [savedPredictions, setSavedPredictions] = useState<MatchPrediction[]>([])
   const [valueBets, setValueBets] = useState<ValueBet[]>([])
   const [activeTab, setActiveTab] = useState("predictions")
+  const [advancedMode, setAdvancedMode] = useState(false)
   
   // Get the currently selected league
   const selectedLeague = leaguesList.find(league => league.id === selectedLeagueId)
@@ -49,6 +52,7 @@ export const PredictionsView = memo(() => {
       }
       
       // Add new prediction
+      toast.success("Prediction saved successfully!")
       return [...prev, prediction]
     })
   }
@@ -107,6 +111,59 @@ export const PredictionsView = memo(() => {
     )
   }
   
+  // Generate advanced prediction using new prediction engine
+  const generateAdvancedPrediction = (homeTeam: string, awayTeam: string) => {
+    if (!homeTeam || !awayTeam) return null;
+    
+    // Run advanced prediction
+    const advancedPrediction = runPrediction(homeTeam, awayTeam, currentMatches);
+    
+    // Create match object
+    const match = {
+      date: new Date().toISOString(),
+      home_team: homeTeam,
+      away_team: awayTeam,
+      home_score: 0,
+      away_score: 0,
+      ht_home_score: 0,
+      ht_away_score: 0
+    };
+    
+    // Determine predicted result based on advancedPrediction
+    const predictedResult = 
+      advancedPrediction.predictedWinner === 'home' ? 'home_win' :
+      advancedPrediction.predictedWinner === 'away' ? 'away_win' :
+      'draw';
+      
+    // Convert prediction to our app's format
+    const prediction: MatchPrediction = {
+      match,
+      predictedResult: predictedResult as 'home_win' | 'draw' | 'away_win',
+      confidenceLevel: advancedPrediction.confidence,
+      predictedScore: {
+        home: advancedPrediction.modelPredictions.poisson.homeGoals,
+        away: advancedPrediction.modelPredictions.poisson.awayGoals
+      },
+      patterns: advancedPrediction.patterns,
+      htftAnalysis: [],
+      headToHead: {
+        homeTeam,
+        awayTeam,
+        totalMatches: 0, // We would need to calculate this
+        homeWins: 0,
+        draws: 0,
+        awayWins: 0,
+        homeGoals: 0,
+        awayGoals: 0,
+        bothTeamsScored: 0,
+        avgTotalGoals: advancedPrediction.homeExpectedGoals + advancedPrediction.awayExpectedGoals,
+        htftReversals: 0
+      }
+    };
+    
+    return prediction;
+  };
+  
   // Filter value bets by active prediction (if any)
   const getActivePrediction = () => {
     if (savedPredictions.length === 0) return null
@@ -129,15 +186,26 @@ export const PredictionsView = memo(() => {
           </h2>
         </div>
         
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="bg-white/5 border-white/10 text-white hover:bg-white/10"
-          onClick={refreshData}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant={advancedMode ? "secondary" : "outline"} 
+            onClick={() => setAdvancedMode(prev => !prev)} 
+            className="gap-2"
+          >
+            <BarChart4 className="h-4 w-4" />
+            {advancedMode ? "Standard Mode" : "Advanced Mode"}
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="bg-white/5 border-white/10 text-white hover:bg-white/10"
+            onClick={refreshData}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+          </Button>
+        </div>
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -161,7 +229,11 @@ export const PredictionsView = memo(() => {
           <TabsContent value="predictions" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <MatchPredictionSystem onSavePrediction={handleSavePrediction} />
+                <MatchPredictionSystem 
+                  onSavePrediction={handleSavePrediction} 
+                  advancedMode={advancedMode}
+                  generateAdvancedPrediction={generateAdvancedPrediction}
+                />
               </div>
               
               <div>

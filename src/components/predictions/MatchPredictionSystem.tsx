@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, TrendingUp, Info, BarChart3, Save } from "lucide-react";
+import { Loader2, TrendingUp, Info, BarChart3, Save, Lightbulb } from "lucide-react";
 import { PredictionPatterns } from "./PredictionPatterns";
 import { HalfTimeFullTimeAnalysis } from "./HalfTimeFullTimeAnalysis";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -159,10 +159,14 @@ const mockHeadToHead: Record<string, HeadToHeadStat> = {
 
 interface MatchPredictionSystemProps {
   onSavePrediction?: (prediction: MatchPrediction) => void;
+  advancedMode?: boolean;
+  generateAdvancedPrediction?: (homeTeam: string, awayTeam: string) => MatchPrediction | null;
 }
 
 export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({ 
-  onSavePrediction 
+  onSavePrediction,
+  advancedMode = false,
+  generateAdvancedPrediction
 }) => {
   const { t } = useTranslation();
   
@@ -187,7 +191,24 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
     
     setIsLoading(true);
     
-    // Simulate API call
+    // If advanced mode is enabled and generator function exists, use it instead of mock data
+    if (advancedMode && generateAdvancedPrediction) {
+      setTimeout(() => {
+        const advancedPrediction = generateAdvancedPrediction(homeTeam, awayTeam);
+        
+        if (advancedPrediction) {
+          setPatterns(advancedPrediction.patterns);
+          setHtftData(advancedPrediction.htftAnalysis);
+          setHeadToHead(advancedPrediction.headToHead);
+          setCurrentPrediction(advancedPrediction);
+        }
+        
+        setIsLoading(false);
+      }, 1000);
+      return;
+    }
+    
+    // Standard mode - use mock data
     setTimeout(() => {
       const matchKey = `${homeTeam}-${awayTeam}`;
       const matchPatterns = mockPatterns[matchKey] || [];
@@ -253,7 +274,6 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
   const handleSaveCurrentPrediction = () => {
     if (currentPrediction && onSavePrediction) {
       onSavePrediction(currentPrediction);
-      toast.success(t("predictions.predictionSaved"));
     }
   };
 
@@ -261,8 +281,29 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
     <div className="space-y-6">
       <Card className="bg-black/20 border-white/5">
         <CardHeader>
-          <CardTitle className="text-white">{t("predictions.title")}</CardTitle>
-          <CardDescription>{t("predictions.subtitle")}</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-white flex items-center gap-2">
+                {advancedMode ? (
+                  <>
+                    <Lightbulb className="h-5 w-5 text-amber-500" />
+                    {t("predictions.titleAdvanced")} 
+                  </>
+                ) : (
+                  t("predictions.title")
+                )}
+              </CardTitle>
+              <CardDescription>
+                {advancedMode ? "Using enhanced statistical models based on historical data" : t("predictions.subtitle")}
+              </CardDescription>
+            </div>
+            
+            {advancedMode && (
+              <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                Advanced Mode
+              </Badge>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -302,7 +343,9 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
           <Button 
             onClick={handleGeneratePrediction} 
             disabled={!homeTeam || !awayTeam || homeTeam === awayTeam || isLoading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+            className={`w-full ${advancedMode ? 
+              'bg-amber-600 hover:bg-amber-700 text-white' : 
+              'bg-blue-500 hover:bg-blue-600 text-white'}`}
           >
             {isLoading ? (
               <div className="flex items-center">
@@ -310,7 +353,7 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
                 {t("predictions.loading")}
               </div>
             ) : (
-              t("predictions.buttonLabel")
+              advancedMode ? "Generate Advanced Prediction" : t("predictions.buttonLabel")
             )}
           </Button>
         </CardContent>
@@ -463,19 +506,34 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
       
       <Card className="bg-black/20 border-white/5">
         <CardHeader>
-          <CardTitle className="text-white">{t("predictions.predictionModelInfo")}</CardTitle>
-          <CardDescription>{t("predictions.howItWorks")}</CardDescription>
+          <CardTitle className="text-white">{advancedMode ? "Advanced Prediction Model" : t("predictions.predictionModelInfo")}</CardTitle>
+          <CardDescription>{advancedMode ? "Using statistical algorithms and historical data analysis" : t("predictions.howItWorks")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-gray-300">
-            {t("predictions.predictionDescription")}
+            {advancedMode ? 
+              "The advanced prediction engine uses statistical algorithms to analyze historical match data, identifying patterns and calculating probabilities for various outcomes." : 
+              t("predictions.predictionDescription")
+            }
           </p>
           <ul className="list-disc pl-6 space-y-1 text-gray-400">
-            <li>{t("predictions.model.historical")}</li>
-            <li>{t("predictions.model.recentForm")}</li>
-            <li>{t("predictions.model.homeAdvantage")}</li>
-            <li>{t("predictions.model.averageGoals")}</li>
-            <li>{t("predictions.model.leaguePosition")}</li>
+            {advancedMode ? (
+              <>
+                <li>Expected goals calculation based on team performance</li>
+                <li>Head-to-head statistical analysis</li>
+                <li>Form index calculation from recent match results</li>
+                <li>Win probability distribution using multiple models</li>
+                <li>Confidence rating based on statistical significance</li>
+              </>
+            ) : (
+              <>
+                <li>{t("predictions.model.historical")}</li>
+                <li>{t("predictions.model.recentForm")}</li>
+                <li>{t("predictions.model.homeAdvantage")}</li>
+                <li>{t("predictions.model.averageGoals")}</li>
+                <li>{t("predictions.model.leaguePosition")}</li>
+              </>
+            )}
           </ul>
         </CardContent>
       </Card>
