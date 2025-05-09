@@ -1,12 +1,11 @@
 
-import { memo, useState } from "react"
+import { memo } from "react"
 import { useLeagueState } from "@/hooks/league"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MatchPredictionPanel } from "@/components/predictions/MatchPredictionPanel"
 import { Button } from "@/components/ui/button"
 import { RefreshCw, ArrowLeft } from "lucide-react"
 import { LeagueStats } from "@/components/stats/LeagueStats"
 import { calculateLeagueStatistics } from "@/utils/leagueStatistics"
+import { MatchPredictionSystem } from "@/components/predictions/MatchPredictionSystem"
 
 export const PredictionsView = memo(() => {
   const { 
@@ -50,29 +49,7 @@ export const PredictionsView = memo(() => {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <MatchPredictionPanel matches={currentMatches} />
-          
-          <Card className="mt-6 bg-black/20 border-white/5">
-            <CardHeader>
-              <CardTitle className="text-white">Prediction Model Information</CardTitle>
-              <CardDescription>How the prediction system works</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-gray-300">
-                The match outcome predictor uses a multi-factor model that considers:
-              </p>
-              <ul className="list-disc pl-6 space-y-1 text-gray-400">
-                <li>Historical match results between the two teams</li>
-                <li>Recent form (last 5 matches) with recency weighting</li>
-                <li>Home advantage factor (1.2x boost to home team scoring)</li>
-                <li>Average goals scored and conceded by each team</li>
-                <li>League position and relative team strength</li>
-              </ul>
-              <p className="text-gray-300 mt-4">
-                Confidence level is calculated based on the amount of available data and the consistency of past results.
-              </p>
-            </CardContent>
-          </Card>
+          <MatchPredictionSystem />
         </div>
         
         <div>

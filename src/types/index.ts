@@ -42,3 +42,47 @@ export interface RouteHistoryItem {
   matchId?: string
   tab?: string
 }
+
+// New prediction types for the enhanced prediction system
+export interface PredictionPattern {
+  type: 'both_teams_score' | 'draw' | 'ht_ft_reversal' | 'specific_score'
+  confidence: number
+  description: string
+  historicalSuccess: number // Percentage of successful predictions
+  oddsValue: number // Potential return multiplier
+}
+
+export interface HalfTimeFullTime {
+  type: 'home_home' | 'home_draw' | 'home_away' | 'draw_home' | 'draw_draw' | 'draw_away' | 'away_home' | 'away_draw' | 'away_away'
+  label: string
+  isReversal: boolean
+  odds: number
+  confidence: number
+}
+
+export interface HeadToHeadStat {
+  homeTeam: string
+  awayTeam: string
+  totalMatches: number
+  homeWins: number
+  draws: number
+  awayWins: number
+  homeGoals: number
+  awayGoals: number
+  bothTeamsScored: number // Count of matches where both teams scored
+  avgTotalGoals: number
+  htftReversals: number // Count of half-time/full-time reversals
+}
+
+export interface MatchPrediction {
+  match: Match
+  predictedResult: 'home_win' | 'draw' | 'away_win'
+  confidenceLevel: number
+  predictedScore?: {
+    home: number
+    away: number
+  }
+  patterns: PredictionPattern[]
+  htftAnalysis: HalfTimeFullTime[]
+  headToHead?: HeadToHeadStat
+}

@@ -1,6 +1,7 @@
 
 import { useState, useCallback } from "react"
 import type { Match } from "@/types"
+import { ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react"
 
 export type SortField = 'date' | 'round' | 'goals' | 'home_team' | 'away_team'
 export type SortDirection = 'asc' | 'desc'
@@ -70,11 +71,15 @@ export function useMatchSorting(initialSortConfig?: SortConfig | null) {
   }, [sortConfig])
 
   const getSortIcon = useCallback((key: SortField) => {
-    // This function should return the appropriate icon component
-    // based on the current sort configuration
-    return sortConfig && sortConfig.key === key
-      ? sortConfig.direction === "asc" ? "↑" : "↓"
-      : "↕"
+    // Return proper JSX elements instead of strings
+    if (!sortConfig || sortConfig.key !== key) {
+      return <ArrowUpDown className="h-4 w-4 ml-1" />
+    }
+    return sortConfig.direction === "asc" ? (
+      <ChevronUp className="h-4 w-4 ml-1" />
+    ) : (
+      <ChevronDown className="h-4 w-4 ml-1" />
+    )
   }, [sortConfig])
 
   return {

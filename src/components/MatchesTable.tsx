@@ -50,48 +50,7 @@ export const MatchesTable = memo(({ matches = [] }: MatchesTableProps) => {
 
   const sortedMatches = useMemo(() => {
     if (!sortConfig) return filteredMatches
-
-    return [...filteredMatches].sort((a, b) => {
-      if (sortConfig.key === "date") {
-        return sortConfig.direction === "asc"
-          ? new Date(a.date).getTime() - new Date(b.date).getTime()
-          : new Date(b.date).getTime() - new Date(a.date).getTime()
-      }
-
-      if (sortConfig.key === "round") {
-        // Extract numbers from round strings for proper sorting
-        const extractRoundNumber = (round: string | number | undefined): number => {
-          if (typeof round === 'number') return round
-          if (!round) return 0
-          const match = String(round).match(/\d+/)
-          return match ? parseInt(match[0], 10) : 0
-        }
-        
-        const roundA = extractRoundNumber(a.round)
-        const roundB = extractRoundNumber(b.round)
-        return sortConfig.direction === "asc" ? roundA - roundB : roundB - roundA
-      }
-
-      if (sortConfig.key === "goals") {
-        const goalsA = a.home_score + a.away_score
-        const goalsB = b.home_score + b.away_score
-        return sortConfig.direction === "asc" ? goalsA - goalsB : goalsB - goalsA
-      }
-
-      if (sortConfig.key === "home_team") {
-        return sortConfig.direction === "asc" 
-          ? a.home_team.localeCompare(b.home_team)
-          : b.home_team.localeCompare(a.home_team)
-      }
-
-      if (sortConfig.key === "away_team") {
-        return sortConfig.direction === "asc" 
-          ? a.away_team.localeCompare(b.away_team)
-          : b.away_team.localeCompare(a.away_team)
-      }
-
-      return 0
-    })
+    return useMatchSorting().sortMatches(filteredMatches)
   }, [filteredMatches, sortConfig])
 
   const matchesByRound = useMemo(() => {

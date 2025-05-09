@@ -2,12 +2,22 @@
 import { useCallback } from "react"
 import type { LeagueData } from "../../types"
 
+interface FormErrors {
+  name?: string
+  season?: string
+  status?: string
+  winner?: string
+  secondPlace?: string
+  thirdPlace?: string
+}
+
 interface LeagueFormFieldsProps {
   league: LeagueData
   onChange: (updatedLeague: LeagueData) => void
+  errors?: FormErrors
 }
 
-export const LeagueFormFields = ({ league, onChange }: LeagueFormFieldsProps) => {
+export const LeagueFormFields = ({ league, onChange, errors = {} }: LeagueFormFieldsProps) => {
   const handleChange = useCallback(
     (field: keyof LeagueData, value: string) => {
       onChange({
@@ -29,9 +39,13 @@ export const LeagueFormFields = ({ league, onChange }: LeagueFormFieldsProps) =>
           type="text"
           value={league.name}
           onChange={(e) => handleChange("name", e.target.value)}
-          className="w-full bg-black/30 text-white border border-white/10 rounded-lg px-4 py-2.5
-                   focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full bg-black/30 text-white border ${
+            errors.name ? "border-red-500" : "border-white/10"
+          } rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent`}
         />
+        {errors.name && (
+          <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -43,9 +57,13 @@ export const LeagueFormFields = ({ league, onChange }: LeagueFormFieldsProps) =>
           type="text"
           value={league.season}
           onChange={(e) => handleChange("season", e.target.value)}
-          className="w-full bg-black/30 text-white border border-white/10 rounded-lg px-4 py-2.5
-                   focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full bg-black/30 text-white border ${
+            errors.season ? "border-red-500" : "border-white/10"
+          } rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent`}
         />
+        {errors.season && (
+          <p className="text-xs text-red-500 mt-1">{errors.season}</p>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -70,12 +88,16 @@ export const LeagueFormFields = ({ league, onChange }: LeagueFormFieldsProps) =>
           id="league-status"
           value={league.status}
           onChange={(e) => handleChange("status", e.target.value)}
-          className="w-full bg-black/30 text-white border border-white/10 rounded-lg px-4 py-2.5
-                   focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+          className={`w-full bg-black/30 text-white border ${
+            errors.status ? "border-red-500" : "border-white/10"
+          } rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent`}
         >
           <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
         </select>
+        {errors.status && (
+          <p className="text-xs text-red-500 mt-1">{errors.status}</p>
+        )}
       </div>
       
       {league.status === "Completed" && (
@@ -89,9 +111,13 @@ export const LeagueFormFields = ({ league, onChange }: LeagueFormFieldsProps) =>
               type="text"
               value={league.winner}
               onChange={(e) => handleChange("winner", e.target.value)}
-              className="w-full bg-black/30 text-white border border-white/10 rounded-lg px-4 py-2.5
-                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full bg-black/30 text-white border ${
+                errors.winner ? "border-red-500" : "border-white/10"
+              } rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent`}
             />
+            {errors.winner && (
+              <p className="text-xs text-red-500 mt-1">{errors.winner}</p>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -103,9 +129,13 @@ export const LeagueFormFields = ({ league, onChange }: LeagueFormFieldsProps) =>
               type="text"
               value={league.secondPlace}
               onChange={(e) => handleChange("secondPlace", e.target.value)}
-              className="w-full bg-black/30 text-white border border-white/10 rounded-lg px-4 py-2.5
-                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full bg-black/30 text-white border ${
+                errors.secondPlace ? "border-red-500" : "border-white/10"
+              } rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent`}
             />
+            {errors.secondPlace && (
+              <p className="text-xs text-red-500 mt-1">{errors.secondPlace}</p>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -117,9 +147,13 @@ export const LeagueFormFields = ({ league, onChange }: LeagueFormFieldsProps) =>
               type="text"
               value={league.thirdPlace}
               onChange={(e) => handleChange("thirdPlace", e.target.value)}
-              className="w-full bg-black/30 text-white border border-white/10 rounded-lg px-4 py-2.5
-                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full bg-black/30 text-white border ${
+                errors.thirdPlace ? "border-red-500" : "border-white/10"
+              } rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent`}
             />
+            {errors.thirdPlace && (
+              <p className="text-xs text-red-500 mt-1">{errors.thirdPlace}</p>
+            )}
           </div>
         </>
       )}
