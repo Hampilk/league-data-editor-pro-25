@@ -1,73 +1,85 @@
-# Welcome to your Lovable project
 
-## Project info
+# Football League Analytics Platform
 
-**URL**: https://lovable.dev/projects/99c0d530-0c9b-4811-8484-8cb6d7d374e1
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## How can I edit this code?
+A comprehensive analytics platform for football leagues, providing match statistics, predictions, pattern analysis, and visualization tools.
 
-There are several ways of editing your application.
+![Dashboard Preview](public/dashboard-preview.png)
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/99c0d530-0c9b-4811-8484-8cb6d7d374e1) and start prompting.
+- **League Management**: Create, edit, and manage multiple football leagues
+- **Match Analysis**: Detailed statistics and visualizations for matches
+- **Score Predictions**: AI-powered match outcome predictions
+- **Pattern Detection**: Advanced statistical pattern analysis
+- **Interactive Dashboards**: Visual representation of league data
+- **Data Import/Export**: Support for CSV data import and export
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- Shadcn UI
+- Recharts for data visualization
+- React Router for navigation
+- Tanstack Query for data fetching
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Prerequisites
 
-Follow these steps:
+- Node.js (v16 or higher)
+- npm or yarn package manager
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Installation
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/football-league-analytics.git
+cd football-league-analytics
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. Install dependencies
+```bash
+npm install
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Open your browser and navigate to `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Project Structure
 
-**Use GitHub Codespaces**
+```
+football-league-analytics/
+├── src/
+│   ├── components/ - UI components
+│   ├── hooks/      - Custom React hooks
+│   ├── pages/      - Application pages/routes
+│   ├── utils/      - Utility functions
+│   ├── types/      - TypeScript type definitions
+│   ├── services/   - API service layers
+│   └── data/       - Static data & mock datasets
+├── public/         - Static assets
+├── docs/           - Documentation
+└── tests/          - Test suites
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Contributing
 
-## What technologies are used for this project?
+Contributions are welcome! Please check out our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-This project is built with:
+## License
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## How can I deploy this project?
+## Acknowledgments
 
-Simply open [Lovable](https://lovable.dev/projects/99c0d530-0c9b-4811-8484-8cb6d7d374e1) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- All contributors who have helped shape and improve this project
+- Open-source packages and libraries that made this project possible

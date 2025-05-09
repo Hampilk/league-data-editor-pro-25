@@ -1,9 +1,9 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Scales, TrendingUp, Percent, AlertCircle } from "lucide-react";
+import { Scale, TrendingUp, Percent, AlertCircle } from "lucide-react";
 import { PredictionPattern } from "@/types";
 import useTranslation from "@/utils/i18n";
 
@@ -98,7 +98,7 @@ export const PredictionPatterns: React.FC<PredictionPatternsProps> = ({ patterns
               
               <div className="flex justify-between items-center mt-3 text-xs">
                 <div className="flex items-center gap-1 text-gray-400">
-                  <Scales className="h-3.5 w-3.5" />
+                  <Scale className="h-3.5 w-3.5" />
                   <span>{t("predictions.results.confidence")}</span>
                 </div>
                 <span className="text-gray-300">{(pattern.historicalSuccess * 100).toFixed(0)}%</span>
