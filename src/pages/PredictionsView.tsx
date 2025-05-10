@@ -8,7 +8,7 @@ import { calculateLeagueStatistics } from "@/utils/leagueStatistics"
 import { runPrediction } from "@/utils/predictionEngine"
 import { MatchPredictionSystem } from "@/components/predictions/MatchPredictionSystem"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { MatchPrediction, ValueBet } from "@/types"
 import { PredictionHistory } from "@/components/predictions/PredictionHistory"
 import { ValueBetTracker } from "@/components/predictions/ValueBetTracker"
@@ -111,7 +111,7 @@ export const PredictionsView = memo(() => {
     )
   }
   
-  // Generate advanced prediction using new prediction engine
+  // Generate advanced prediction using prediction engine
   const generateAdvancedPrediction = (homeTeam: string, awayTeam: string) => {
     if (!homeTeam || !awayTeam) return null;
     
@@ -171,7 +171,6 @@ export const PredictionsView = memo(() => {
   }
   
   const activePrediction = getActivePrediction()
-  const activePredictionBets = activePrediction?.valueBets || []
   
   return (
     <div className="space-y-6 animate-fadeIn">
