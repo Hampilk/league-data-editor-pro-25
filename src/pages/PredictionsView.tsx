@@ -4,6 +4,7 @@ import { PredictionsHeader } from "@/components/predictions/PredictionsHeader"
 import { PredictionTabsView } from "@/components/predictions/PredictionTabsView"
 import { PredictionTabContent } from "@/components/predictions/PredictionTabContent"
 import { usePredictionView } from "@/hooks/usePredictionView"
+import { Tabs } from "@/components/ui/tabs"
 
 export const PredictionsView = memo(() => {
   const {
@@ -39,24 +40,26 @@ export const PredictionsView = memo(() => {
         onToggleAdvancedMode={handleToggleAdvancedMode}
       />
       
-      <PredictionTabsView
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
-      
-      <PredictionTabContent
-        activeTab={activeTab}
-        leagueStatistics={leagueStatistics}
-        selectedLeague={selectedLeague}
-        savedPredictions={savedPredictions}
-        valueBets={valueBets}
-        advancedMode={advancedMode}
-        activePrediction={activePrediction}
-        onSavePrediction={handleSavePrediction}
-        onSaveValueBet={handleSaveValueBet}
-        onUpdateValueBet={handleUpdateValueBet}
-        generateAdvancedPrediction={generateAdvancedPrediction}
-      />
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <PredictionTabsView
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+        
+        <PredictionTabContent
+          activeTab={activeTab}
+          leagueStatistics={leagueStatistics}
+          selectedLeague={selectedLeague}
+          savedPredictions={savedPredictions}
+          valueBets={valueBets}
+          advancedMode={advancedMode}
+          activePrediction={activePrediction}
+          onSavePrediction={handleSavePrediction}
+          onSaveValueBet={handleSaveValueBet}
+          onUpdateValueBet={handleUpdateValueBet}
+          generateAdvancedPrediction={generateAdvancedPrediction}
+        />
+      </Tabs>
     </div>
   )
 })

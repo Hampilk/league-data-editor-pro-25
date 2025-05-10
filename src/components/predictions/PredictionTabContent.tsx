@@ -1,6 +1,6 @@
 
 import React from "react"
-import { TabsContent } from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { MatchPredictionSystem } from "./MatchPredictionSystem"
 import { LeagueStats } from "@/components/stats/LeagueStats"
 import { ValueBetTracker } from "./ValueBetTracker"
@@ -37,35 +37,37 @@ export const PredictionTabContent: React.FC<PredictionTabContentProps> = ({
 }) => {
   return (
     <div className="mt-6">
-      <TabsContent value="predictions" className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <MatchPredictionSystem 
-              onSavePrediction={onSavePrediction} 
-              advancedMode={advancedMode}
-              generateAdvancedPrediction={generateAdvancedPrediction}
-            />
+      <Tabs value={activeTab}>
+        <TabsContent value="predictions" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <MatchPredictionSystem 
+                onSavePrediction={onSavePrediction} 
+                advancedMode={advancedMode}
+                generateAdvancedPrediction={generateAdvancedPrediction}
+              />
+            </div>
+            
+            <div>
+              <LeagueStats statistics={leagueStatistics} league={selectedLeague} />
+            </div>
           </div>
-          
-          <div>
-            <LeagueStats statistics={leagueStatistics} league={selectedLeague} />
-          </div>
-        </div>
-      </TabsContent>
-      
-      <TabsContent value="value-bets">
-        <ValueBetTracker 
-          match={activePrediction?.match}
-          patterns={activePrediction?.patterns || []}
-          existingBets={valueBets}
-          onSaveBet={onSaveValueBet}
-          onUpdateBet={onUpdateValueBet}
-        />
-      </TabsContent>
-      
-      <TabsContent value="history">
-        <PredictionHistory predictions={savedPredictions} />
-      </TabsContent>
+        </TabsContent>
+        
+        <TabsContent value="value-bets">
+          <ValueBetTracker 
+            match={activePrediction?.match}
+            patterns={activePrediction?.patterns || []}
+            existingBets={valueBets}
+            onSaveBet={onSaveValueBet}
+            onUpdateBet={onUpdateValueBet}
+          />
+        </TabsContent>
+        
+        <TabsContent value="history">
+          <PredictionHistory predictions={savedPredictions} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
