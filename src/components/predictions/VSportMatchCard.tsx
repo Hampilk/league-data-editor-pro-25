@@ -1,80 +1,132 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  getMatchStatusConfig, 
+  getTimeDifference,
+  formatTime,
+  getOddsColorClass,
+  getMatchTimeElapsed
+} from "@/utils/vsport/matchUtils";
 import { VSportTrackerMatch } from "@/types/vsport";
-import { getMatchStatusConfig, getTimeDifference } from "@/utils/vsport/matchUtils";
+import { Clock, Timer } from "lucide-react";
 
 interface VSportMatchCardProps {
   match: VSportTrackerMatch;
 }
 
 export function VSportMatchCard({ match }: VSportMatchCardProps) {
-  const statusConfig = getMatchStatusConfig(match.status);
+  const { 
+    homeTeam, 
+    awayTeam, 
+    kickoff, 
+    status, 
+    homeOdds, 
+    drawOdds, 
+    awayOdds,
+    homeScore,
+    awayScore
+  } = match;
   
-  return (
-    <div className="bg-black/30 rounded-lg p-4 border border-white/5">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-gray-500">Round {match.round}</span>
-        <Badge variant="outline" className={statusConfig.classes}>{statusConfig.label}</Badge>
-      </div>
+  const statusConfig = getMatchStatusConfig(status);
+  const isLive = status === "in_progress";
+  const isCompleted = status === "completed";
+  const isBettingOpen = status === "betting_open";
+  
+  // Get time display based on status
+  const timeDisplay = isLive 
+    ? getMatchTimeElapsed(kickoff)
+    : isCompleted 
+      ? "FT" 
+      : getTimeDifference(kickoff);
       
-      <div className="flex justify-between items-center mb-3">
-        <div className="text-sm text-white">{match.homeTeam}</div>
-        {match.status === 'completed' ? (
-          <div className="text-lg font-bold text-white">{match.homeScore} - {match.awayScore}</div>
-        ) : (
-          <div className="text-xs font-mono bg-black/50 px-2 py-1 rounded text-amber-400">
-            {getTimeDifference(match.kickoff)}
+  // Score display
+  const scoreDisplay = (isLive || isCompleted) && homeScore !== undefined && awayScore !== undefined
+    ? `${homeScore} - ${awayScore}`
+    : "vs";
+    
+  // Determine winner
+  let homeTeamClass = "text-white";
+  let awayTeamClass = "text-white";
+  
+  if (isCompleted && homeScore !== undefined && awayScore !== undefined) {
+    if (homeScore > awayScore) {
+      homeTeamClass += " font-bold text-green-400";
+      awayTeamClass += " text-gray-400";
+    } else if (homeScore < awayScore) {
+      homeTeamClass += " text-gray-400";
+      awayTeamClass += " font-bold text-green-400";
+    } else {
+      homeTeamClass += " text-amber-400";
+      awayTeamClass += " text-amber-400";
+    }
+  }
+
+  return (
+    <Card className="bg-black/30 border border-white/5 overflow-hidden">
+      <CardContent className="p-3">
+        <div className="flex justify-between items-center">
+          <Badge 
+            variant="outline" 
+            className={`${statusConfig.classes} text-xs`}
+          >
+            {statusConfig.label}
+          </Badge>
+          
+          <div className="text-xs text-gray-400 flex items-center gap-1">
+            {isLive ? (
+              <>
+                <Timer className="h-3 w-3 text-amber-500 animate-pulse" />
+                <span className="text-amber-400 font-medium">{timeDisplay}</span>
+              </>
+            ) : (
+              <>
+                <Clock className="h-3 w-3" />
+                <span>{formatTime(kickoff)}</span>
+              </>
+            )}
+          </div>
+        </div>
+        
+        <div className="mt-3 flex items-center justify-between">
+          <div className={`w-[40%] truncate ${homeTeamClass}`}>
+            {homeTeam}
+          </div>
+          
+          <div className={`px-3 py-1 min-w-[60px] text-center ${isLive ? 'bg-amber-500/20' : 'bg-black/20'} rounded-lg ${isLive ? 'text-white font-bold' : 'text-gray-400'}`}>
+            {scoreDisplay}
+          </div>
+          
+          <div className={`w-[40%] truncate text-right ${awayTeamClass}`}>
+            {awayTeam}
+          </div>
+        </div>
+        
+        {/* Odds display */}
+        {isBettingOpen && (
+          <div className="mt-3 grid grid-cols-3 gap-1 text-center text-xs">
+            <div className="bg-black/30 rounded p-1">
+              <div className="text-gray-400">Home</div>
+              <div className={getOddsColorClass(homeOdds || 0)}>
+                {homeOdds?.toFixed(2)}
+              </div>
+            </div>
+            <div className="bg-black/30 rounded p-1">
+              <div className="text-gray-400">Draw</div>
+              <div className={getOddsColorClass(drawOdds || 0)}>
+                {drawOdds?.toFixed(2)}
+              </div>
+            </div>
+            <div className="bg-black/30 rounded p-1">
+              <div className="text-gray-400">Away</div>
+              <div className={getOddsColorClass(awayOdds || 0)}>
+                {awayOdds?.toFixed(2)}
+              </div>
+            </div>
           </div>
         )}
-        <div className="text-sm text-white">{match.awayTeam}</div>
-      </div>
-      
-      {(match.status === 'betting_open' || match.status === 'upcoming') && (
-        <div className="grid grid-cols-3 gap-2 mt-3 border-t border-white/5 pt-3">
-          <div className="text-center">
-            <div className="text-xs text-gray-400 mb-1">Home</div>
-            <div className="bg-blue-900/30 rounded py-1 text-blue-400 font-medium">{match.homeOdds?.toFixed(2)}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xs text-gray-400 mb-1">Draw</div>
-            <div className="bg-gray-800/50 rounded py-1 text-gray-300 font-medium">{match.drawOdds?.toFixed(2)}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xs text-gray-400 mb-1">Away</div>
-            <div className="bg-amber-900/30 rounded py-1 text-amber-400 font-medium">{match.awayOdds?.toFixed(2)}</div>
-          </div>
-        </div>
-      )}
-      
-      {match.status === 'in_progress' && (
-        <div className="text-center mt-3 border-t border-white/5 pt-3">
-          <div className="inline-flex items-center gap-2 bg-red-500/10 text-red-400 px-3 py-1 rounded text-sm">
-            <span className="animate-pulse h-2 w-2 rounded-full bg-red-500"></span>
-            LIVE
-          </div>
-        </div>
-      )}
-      
-      {match.status === 'completed' && (
-        <div className="flex justify-between items-center mt-3 border-t border-white/5 pt-3">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-green-400" />
-            <span className="text-xs text-gray-400">Value Rating:</span>
-          </div>
-          <div className="flex">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span 
-                key={star} 
-                className={star <= 3 ? "text-amber-500" : "text-gray-600"}
-              >
-                ★
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { VSportTrackerMatch } from "@/types/vsport";
 import { updateMatchStatuses } from "@/utils/vsport/matchUtils";
 import { toast } from "sonner";
@@ -57,8 +57,25 @@ export function useVSportMatches(onRefresh?: () => void) {
   ]);
 
   const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
-  const handleRefresh = () => {
+  // Auto-refresh matches every 60 seconds when enabled
+  useEffect(() => {
+    let intervalId: number | undefined;
+    
+    if (autoRefresh) {
+      intervalId = window.setInterval(() => {
+        handleRefresh(false); // silent refresh (no toast)
+      }, 60000); // 60 seconds
+    }
+    
+    return () => {
+      if (intervalId) window.clearInterval(intervalId);
+    };
+  }, [autoRefresh]);
+
+  const handleRefresh = (showToast: boolean = true) => {
     setRefreshing(true);
     // Simulate fetching new match data
     setTimeout(() => {
@@ -67,14 +84,24 @@ export function useVSportMatches(onRefresh?: () => void) {
       
       setMatches(updatedMatches);
       setRefreshing(false);
-      toast.success("V-sport matches updated");
+      setLastUpdated(new Date());
+      
+      if (showToast) toast.success("V-sport matches updated");
       if (onRefresh) onRefresh();
     }, 1500);
+  };
+
+  const toggleAutoRefresh = () => {
+    setAutoRefresh(prev => !prev);
+    toast.info(`Auto-refresh ${!autoRefresh ? "enabled" : "disabled"}`);
   };
 
   return {
     matches,
     refreshing,
-    handleRefresh
+    lastUpdated,
+    autoRefresh,
+    handleRefresh,
+    toggleAutoRefresh
   };
 }
