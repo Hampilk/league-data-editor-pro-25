@@ -3,6 +3,7 @@
 export * from "./leagueStatistics";
 export * from "./predictionEngine";
 export * from "./vsport/vsportPredictionEngine";
+export * from "./vsport/matchUtils";
 export * from "./calculations";
 export * from "./csvParser";
 export * from "./storage";
