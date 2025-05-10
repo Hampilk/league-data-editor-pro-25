@@ -5,6 +5,7 @@ import { MatchPredictionSystem } from "./MatchPredictionSystem"
 import { LeagueStats } from "@/components/stats/LeagueStats"
 import { ValueBetTracker } from "./ValueBetTracker"
 import { PredictionHistory } from "./PredictionHistory"
+import { VSportMatchTracker } from "./VSportMatchTracker"
 import { LeagueStatistics } from "@/utils/leagueStatistics"
 import { MatchPrediction, ValueBet } from "@/types"
 
@@ -20,6 +21,7 @@ interface PredictionTabContentProps {
   onSaveValueBet: (bet: ValueBet) => void
   onUpdateValueBet: (bet: ValueBet) => void
   generateAdvancedPrediction: (homeTeam: string, awayTeam: string) => MatchPrediction | null
+  onRefreshData?: () => void
 }
 
 export const PredictionTabContent: React.FC<PredictionTabContentProps> = ({
@@ -33,7 +35,8 @@ export const PredictionTabContent: React.FC<PredictionTabContentProps> = ({
   onSavePrediction,
   onSaveValueBet,
   onUpdateValueBet,
-  generateAdvancedPrediction
+  generateAdvancedPrediction,
+  onRefreshData
 }) => {
   return (
     <div className="mt-6">
@@ -48,8 +51,9 @@ export const PredictionTabContent: React.FC<PredictionTabContentProps> = ({
               />
             </div>
             
-            <div>
+            <div className="space-y-6">
               <LeagueStats statistics={leagueStatistics} league={selectedLeague} />
+              <VSportMatchTracker onRefresh={onRefreshData} />
             </div>
           </div>
         </TabsContent>

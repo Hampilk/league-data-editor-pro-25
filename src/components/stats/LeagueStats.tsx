@@ -1,12 +1,19 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LeagueStatistics } from "@/utils/leagueStatistics"
-import { LeagueData } from "@/types"
-import { Award, Flag, Gauge, Goal, PieChart, TrendingUp, Users2 } from "lucide-react"
+import { Flag, Gauge, Goal, PieChart, TrendingUp, Users2, Award } from "lucide-react"
 
 interface LeagueStatsProps {
   statistics: LeagueStatistics
-  league?: LeagueData | null
+  league?: { 
+    id: string; 
+    name: string;
+    season?: string;
+    winner?: string;
+    secondPlace?: string;
+    thirdPlace?: string;
+    status?: "In Progress" | "Completed";
+  } | null
 }
 
 export function LeagueStats({ statistics, league }: LeagueStatsProps) {
@@ -22,7 +29,7 @@ export function LeagueStats({ statistics, league }: LeagueStatsProps) {
         {league && (
           <div className="mb-4">
             <h3 className="font-medium text-lg text-white mb-1">{league.name}</h3>
-            <p className="text-sm text-gray-400">{league.season} • {league.status}</p>
+            <p className="text-sm text-gray-400">{league.season || 'Current Season'} • {league.status || 'In Progress'}</p>
           </div>
         )}
         
@@ -59,7 +66,7 @@ export function LeagueStats({ statistics, league }: LeagueStatsProps) {
           />
         </div>
         
-        {league?.status === "Completed" && (
+        {league?.status === "Completed" && league.winner && (
           <div className="pt-4 border-t border-white/10">
             <h4 className="font-medium text-white mb-3">Final Results</h4>
             <div className="space-y-2">
@@ -67,14 +74,18 @@ export function LeagueStats({ statistics, league }: LeagueStatsProps) {
                 <div className="w-8 h-8 bg-amber-500/30 text-amber-400 rounded-full flex items-center justify-center mr-3">1</div>
                 <span className="text-white">{league.winner}</span>
               </div>
-              <div className="flex items-center">
-                <div className="w-8 h-8 bg-gray-500/30 text-gray-400 rounded-full flex items-center justify-center mr-3">2</div>
-                <span className="text-white">{league.secondPlace}</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-8 h-8 bg-amber-700/30 text-amber-700 rounded-full flex items-center justify-center mr-3">3</div>
-                <span className="text-white">{league.thirdPlace}</span>
-              </div>
+              {league.secondPlace && (
+                <div className="flex items-center">
+                  <div className="w-8 h-8 bg-gray-500/30 text-gray-400 rounded-full flex items-center justify-center mr-3">2</div>
+                  <span className="text-white">{league.secondPlace}</span>
+                </div>
+              )}
+              {league.thirdPlace && (
+                <div className="flex items-center">
+                  <div className="w-8 h-8 bg-amber-700/30 text-amber-700 rounded-full flex items-center justify-center mr-3">3</div>
+                  <span className="text-white">{league.thirdPlace}</span>
+                </div>
+              )}
             </div>
           </div>
         )}

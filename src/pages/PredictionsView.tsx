@@ -58,6 +58,7 @@ export const PredictionsView = memo(() => {
           onSaveValueBet={handleSaveValueBet}
           onUpdateValueBet={handleUpdateValueBet}
           generateAdvancedPrediction={generateAdvancedPrediction}
+          onRefreshData={refreshData}
         />
       </Tabs>
     </div>
