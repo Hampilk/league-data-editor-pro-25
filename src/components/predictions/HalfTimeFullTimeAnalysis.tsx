@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Repeat, TrendingUp, AlertCircle } from "lucide-react";
 import { HalfTimeFullTime } from "@/types";
 import useTranslation from "@/utils/i18n";
+import { EmptyDataState } from "./EmptyDataState";
 
 interface HalfTimeFullTimeAnalysisProps {
   data: HalfTimeFullTime[];
@@ -28,21 +28,10 @@ export const HalfTimeFullTimeAnalysis: React.FC<HalfTimeFullTimeAnalysisProps> =
   const sortedData = [...reversals, ...regular];
   
   if (!data || data.length === 0) {
-    return (
-      <Card className="bg-black/20 border-white/5">
-        <CardHeader>
-          <CardTitle className="text-white text-lg">
-            {t("predictions.htft")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-6 text-gray-400">
-            <AlertCircle className="w-12 h-12 mb-3 opacity-50" />
-            <p>{t("predictions.noDataAvailable")}</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <EmptyDataState 
+      message={t("predictions.noDataAvailable")} 
+      icon={<AlertCircle className="w-12 h-12 mb-3 opacity-50" />} 
+    />;
   }
 
   return (

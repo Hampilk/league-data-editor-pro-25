@@ -1,20 +1,18 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Save, Lightbulb, Info } from "lucide-react";
-import { PredictionPatterns } from "./PredictionPatterns";
-import { HalfTimeFullTimeAnalysis } from "./HalfTimeFullTimeAnalysis";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Save, Lightbulb } from "lucide-react";
 import { MatchPrediction } from "@/types";
 import useTranslation from "@/utils/i18n";
 import { toast } from "sonner";
 import { mockTeams } from "@/data/mockTeams";
 import { PredictionForm } from "./PredictionForm";
 import { PredictionInfo } from "./PredictionInfo";
-import { PredictionStats } from "./PredictionStats";
+import { PredictionTabs } from "./PredictionTabs";
 import { usePredictions } from "@/hooks/usePredictions";
+import { EmptyDataState } from "./EmptyDataState";
 
 interface MatchPredictionSystemProps {
   onSavePrediction?: (prediction: MatchPrediction) => void;
@@ -98,7 +96,7 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
         </CardContent>
       </Card>
       
-      {hasResults && (
+      {hasResults ? (
         <div className="animate-fadeIn">
           <div className="flex justify-end mb-4">
             <Button
@@ -112,43 +110,14 @@ export const MatchPredictionSystem: React.FC<MatchPredictionSystemProps> = ({
             </Button>
           </div>
           
-          <Tabs defaultValue="patterns">
-            <TabsList className="grid w-full grid-cols-3 bg-black/20">
-              <TabsTrigger value="patterns">{t("ui.tab.overview")}</TabsTrigger>
-              <TabsTrigger value="htft">{t("predictions.htft")}</TabsTrigger>
-              <TabsTrigger value="stats">{t("ui.tab.statistics")}</TabsTrigger>
-            </TabsList>
-            
-            <div className="mt-4">
-              <TabsContent value="patterns">
-                <PredictionPatterns patterns={patterns} />
-              </TabsContent>
-              
-              <TabsContent value="htft">
-                <HalfTimeFullTimeAnalysis data={htftData} />
-              </TabsContent>
-              
-              <TabsContent value="stats">
-                {headToHead ? (
-                  <PredictionStats 
-                    headToHead={headToHead} 
-                    currentPrediction={currentPrediction} 
-                  />
-                ) : (
-                  <Card className="bg-black/20 border-white/5">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col items-center justify-center text-gray-400">
-                        <Info className="h-12 w-12 mb-3 opacity-50" />
-                        <p>{t("predictions.noDataAvailable")}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
-            </div>
-          </Tabs>
+          <PredictionTabs
+            patterns={patterns}
+            htftData={htftData}
+            headToHead={headToHead}
+            currentPrediction={currentPrediction}
+          />
         </div>
-      )}
+      ) : null}
       
       <PredictionInfo advancedMode={advancedMode} />
     </div>
