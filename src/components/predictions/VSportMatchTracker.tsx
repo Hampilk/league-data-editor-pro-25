@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -75,12 +76,12 @@ export function VSportMatchTracker({ onRefresh }: VSportMatchTrackerProps) {
         
         // Logic to update match status based on time
         if (match.status === 'betting_open' && matchTime <= now) {
-          return {...match, status: 'in_progress'};
+          return {...match, status: 'in_progress' as const};
         } else if (match.status === 'in_progress' && (now.getTime() - matchTime.getTime()) > 240000) {
           // 4 minutes after kickoff, match is completed
           return {
             ...match, 
-            status: 'completed',
+            status: 'completed' as const,
             homeScore: Math.floor(Math.random() * 4),
             awayScore: Math.floor(Math.random() * 3)
           };
