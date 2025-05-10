@@ -1,31 +1,17 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Timer, RefreshCw, TrendingUp, Clock } from "lucide-react";
 import { toast } from "sonner";
-
-interface VSportMatch {
-  id: string;
-  homeTeam: string;
-  awayTeam: string;
-  kickoff: Date;
-  status: 'upcoming' | 'betting_open' | 'in_progress' | 'completed';
-  homeOdds?: number;
-  drawOdds?: number;
-  awayOdds?: number;
-  homeScore?: number;
-  awayScore?: number;
-  round?: number;
-}
+import { VSportTrackerMatch } from "@/types/vsport";
 
 interface VSportMatchTrackerProps {
   onRefresh?: () => void;
 }
 
 export function VSportMatchTracker({ onRefresh }: VSportMatchTrackerProps) {
-  const [matches, setMatches] = useState<VSportMatch[]>([
+  const [matches, setMatches] = useState<VSportTrackerMatch[]>([
     {
       id: "vs-1",
       homeTeam: "Virtual Arsenal",
@@ -109,7 +95,7 @@ export function VSportMatchTracker({ onRefresh }: VSportMatchTrackerProps) {
     }, 1500);
   };
 
-  const getMatchStatusBadge = (status: VSportMatch['status']) => {
+  const getMatchStatusBadge = (status: VSportTrackerMatch['status']) => {
     switch (status) {
       case 'upcoming':
         return <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">Upcoming</Badge>;

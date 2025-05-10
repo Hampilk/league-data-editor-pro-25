@@ -43,3 +43,18 @@ export interface VSportStats {
   fastestGoalMinute: number;
   winningAtHalfWonPercentage: number;
 }
+
+// Adding the interface for VSportMatch used in the VSportMatchTracker component
+export interface VSportTrackerMatch {
+  id: string;
+  homeTeam: string;
+  awayTeam: string;
+  kickoff: Date;
+  status: 'upcoming' | 'betting_open' | 'in_progress' | 'completed';
+  homeOdds?: number;
+  drawOdds?: number;
+  awayOdds?: number;
+  homeScore?: number;
+  awayScore?: number;
+  round?: number;
+}
