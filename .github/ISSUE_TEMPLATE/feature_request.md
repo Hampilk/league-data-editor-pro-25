@@ -19,3 +19,6 @@ A clear and concise description of any alternative solutions or features you've 
 
 **Additional context**
 Add any other context or screenshots about the feature request here.
+
+**Related to current version**
+Specify if this feature request is related to a specific version or component of the application.

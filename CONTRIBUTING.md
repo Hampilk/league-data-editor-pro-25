@@ -67,6 +67,16 @@ This section guides you through submitting an enhancement suggestion, including 
 - Use meaningful class names
 - Maintain consistency with existing styling patterns
 
+## V-Sport Feature Development
+
+When working on V-Sport features:
+
+- Ensure all match tracking components are responsive
+- Test with various match statuses (upcoming, in-progress, completed)
+- Follow the established design patterns for the betting interface
+- Verify that auto-refresh functionality works correctly
+- Document any new V-Sport APIs or utilities you create
+
 ## Additional Notes
 
 ### Issue and Pull Request Labels
@@ -79,5 +89,7 @@ This section lists the labels we use to help track and manage issues and pull re
 * `good first issue` - Good for newcomers
 * `help wanted` - Extra attention is needed
 * `wontfix` - This will not be worked on
+* `v-sport` - Related to V-Sport functionality
 
 Thank you for contributing!
+

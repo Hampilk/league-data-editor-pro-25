@@ -13,6 +13,7 @@
 - [ ] Documentation update
 - [ ] Refactoring (no functional changes)
 - [ ] Performance improvement
+- [ ] V-Sport feature enhancement
 
 ## How Has This Been Tested?
 <!-- Describe the tests you ran to verify your changes -->
@@ -20,6 +21,7 @@
 - [ ] Integration tests
 - [ ] End-to-end tests
 - [ ] Manual testing
+- [ ] V-Sport match tracking testing
 
 ## Checklist:
 <!-- Go through the following items and check them off when done -->
@@ -31,6 +33,8 @@
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] New and existing unit tests pass locally with my changes
 - [ ] Any dependent changes have been merged and published in downstream modules
+- [ ] I have updated relevant V-Sport components if applicable
 
 ## Screenshots (if appropriate):
 <!-- Add screenshots to help explain your changes -->
+

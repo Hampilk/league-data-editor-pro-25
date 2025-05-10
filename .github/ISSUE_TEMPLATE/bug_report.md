@@ -28,7 +28,10 @@ If applicable, add screenshots to help explain your problem.
  - Device: [e.g. Desktop, iPhone X]
  - OS: [e.g. Windows 10, iOS 15]
  - Browser: [e.g. Chrome 96, Safari 15]
- - Version: [e.g. 0.2.1]
+ - App Version: [e.g. 0.3.1]
 
 **Additional context**
 Add any other context about the problem here.
+
+**Does this issue affect V-Sport functionality?**
+Yes/No (Please specify if the issue impacts V-Sport match tracking or betting features)
